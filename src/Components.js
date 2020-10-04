@@ -34,16 +34,19 @@ class Circle extends React.Component {
 
     handleClick(i) {
         const sectors = this.state.sectors.slice();
-        const color = this.props.apply();
-        console.log(color);
-        sectors[i] = color;
+        sectors[i] = this.props.apply(i);
         this.setState({ sectors: sectors });
     }
 
     renderSector(i) {
         return (
-            <Sector x="0" y="0" d={this.props.diameter}
-                a1={i * 30} a2={i * 30 + 30}
+            <Sector
+                key={i.toString()}
+                x="0"
+                y="0"
+                d={this.props.diameter}
+                a1={i * 30}
+                a2={i * 30 + 30}
                 color={this.state.sectors[i]}
                 onClick={() => this.handleClick(i)}
             />
@@ -51,20 +54,14 @@ class Circle extends React.Component {
     }
 
     render() {
+        var sectors = [];
+        for (var i = 0; i < 12; i++) {
+            sectors.push(this.renderSector(i));
+        }
+
         return (
-            <g transform={`translate(${this.props.centerX},${this.props.centerY})`} stroke="#000" strokeWidth="2">
-                {this.renderSector(0)}
-                {this.renderSector(1)}
-                {this.renderSector(2)}
-                {this.renderSector(3)}
-                {this.renderSector(4)}
-                {this.renderSector(5)}
-                {this.renderSector(6)}
-                {this.renderSector(7)}
-                {this.renderSector(8)}
-                {this.renderSector(9)}
-                {this.renderSector(10)}
-                {this.renderSector(11)}
+            <g id="circle" transform={`translate(${this.props.centerX},${this.props.centerY})`} stroke="#000" strokeWidth="2">
+                {sectors}
             </g>
         );
     }
@@ -107,6 +104,7 @@ class ColorPicker extends React.Component {
 
         return (
             <rect
+                key={i.toString()}
                 x={this.margin + i * size}
                 y={this.props.y}
                 width={size}
@@ -127,22 +125,14 @@ class ColorPicker extends React.Component {
     }
 
     render() {
+        var squares = [];
+        for (var i = 0; i < this.colors.length; i++) {
+            squares.push(this.renderSquare(i));
+        }
+
         return (
             <g stroke="#000" strokeWidth="2">
-                {this.renderSquare(0)}
-                {this.renderSquare(1)}
-                {this.renderSquare(2)}
-                {this.renderSquare(3)}
-                {this.renderSquare(4)}
-                {this.renderSquare(5)}
-                {this.renderSquare(6)}
-                {this.renderSquare(7)}
-                {this.renderSquare(8)}
-                {this.renderSquare(9)}
-                {this.renderSquare(10)}
-                {this.renderSquare(11)}
-                {this.renderSquare(12)}
-                {this.renderSquare(13)}
+                {squares}
                 {this.renderSelection()}
             </g>
         );
@@ -154,7 +144,8 @@ class CircleColoring extends React.Component {
         super(props);
 
         this.state = {
-            selectedColor: "#fff"
+            selectedColor: "#fff",
+            firstSector: undefined,
         };
     }
 
@@ -162,21 +153,40 @@ class CircleColoring extends React.Component {
         this.setState({ selectedColor: color });
     }
 
-    getSelectedColor() {
+    getSelectedColor(i) {
+        if (typeof this.state.firstSector === 'undefined') {
+            var state = Object.assign({}, this.state);
+            state.firstSector = i;
+            this.setState(state);
+        }
+
         return this.state.selectedColor;
     }
 
+    finalize() {
+        var circle = document.getElementById("circle");
+        const transform = circle.getAttribute("transform").split(" ")[0];
+        const deg = ((this.state.firstSector || 0) - 5) * 30;
+        circle.setAttribute("transform", transform + ` rotate(${deg},0,0)`);
+
+        /* TODO: ... save SVG to file */
+        console.log(circle);
+    }
+
     render() {
-        const size = 600;
+        const size = 500;
 
         return (
             <div>
                 <h1>Chroma Therapy</h1>
                 <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                     <rect width={size} height={size} fill="none" stroke="#000" strokeWidth="1" />
-                    <Circle centerX={size / 2} centerY={size / 2.5} diameter={size * 2 / 3} apply={() => this.getSelectedColor()} />
+                    <Circle centerX={size / 2} centerY={size / 2.5} diameter={size * 2 / 3} apply={(i) => this.getSelectedColor(i)} />
                     <ColorPicker width={size} y={size - 100} select={(color) => this.selectColor(color)} />
                 </svg>
+                <div>
+                    <button onClick={() => this.finalize()}>Submit</button>
+                </div>
             </div>
         );
     }
