@@ -16,9 +16,10 @@ class Sector extends React.Component {
 
     render() {
         const path = this.getSectorPath(this.props.x, this.props.y, this.props.d, this.props.a1, this.props.a2);
+        const id = `sector-${this.props.ident}`;
 
         return (
-            <path d={path} fill={this.props.color} onClick={() => this.props.onClick()} />
+            <path id={id} d={path} fill={this.props.color} onClick={() => this.props.onClick()} />
         );
     }
 }
@@ -42,6 +43,7 @@ class Circle extends React.Component {
         return (
             <Sector
                 key={i.toString()}
+                ident={i}
                 x="0"
                 y="0"
                 d={this.props.diameter}
@@ -163,14 +165,20 @@ class CircleColoring extends React.Component {
         return this.state.selectedColor;
     }
 
-    finalize() {
-        var circle = document.getElementById("circle");
-        const transform = circle.getAttribute("transform").split(" ")[0];
-        const deg = ((this.state.firstSector || 0) - 5) * 30;
-        circle.setAttribute("transform", transform + ` rotate(${deg},0,0)`);
+    export() {
+        var order = [];
+        for (var i = 0; i < 12; i++) {
+            const id = ((this.state.firstSector || 0) - i + 12) % 12;
+            order.push(document.getElementById("sector-" + id.toString()).getAttribute("fill"));
+        }
+        const result = btoa(order.join(","))
+        console.log(result);
 
-        /* TODO: ... save SVG to file */
-        console.log(circle);
+        document.getElementById("result").innerHTML = result;
+
+        // const transform = circle.getAttribute("transform").split(" ")[0];
+        // const deg = ((this.state.firstSector || 0) - 5) * 30;
+        // circle.setAttribute("transform", transform + ` rotate(${deg},0,0)`);
     }
 
     render() {
@@ -185,7 +193,10 @@ class CircleColoring extends React.Component {
                     <ColorPicker width={size} y={size - 100} select={(color) => this.selectColor(color)} />
                 </svg>
                 <div>
-                    <button onClick={() => this.finalize()}>Submit</button>
+                    <button onClick={() => this.export()}>Submit</button>
+                </div>
+                <div>
+                    <p id="result"></p>
                 </div>
             </div>
         );
