@@ -195,13 +195,13 @@ class CircleColoring extends React.Component {
                     <ColorPicker width={size} y={size - 100} select={(color) => this.selectColor(color)} />
                 </svg>
                 <div className="row">
-                    <button onClick={() => this.export()}>Submit</button>
+                    <button onClick={() => this.export()}>Generate code</button>
                 </div>
                 <div className="row">
                     <textarea id="result" rows="3" cols="50" readOnly />
                 </div>
                 <div className="row">
-                    <button onClick={() => this.copy()}>Copy</button>
+                    <button onClick={() => this.copy()}>Copy to clipboard</button>
                 </div>
             </div>
         );
