@@ -29,7 +29,7 @@ class Circle extends React.Component {
         super(props);
 
         this.state = {
-            sectors: Array(12).fill("#fff")
+            sectors: Array(12).fill("#ffffff")
         };
     }
 
@@ -146,7 +146,7 @@ class CircleColoring extends React.Component {
         super(props);
 
         this.state = {
-            selectedColor: "#fff",
+            selectedColor: "#ffffff",
             firstSector: undefined,
         };
     }
@@ -171,14 +171,16 @@ class CircleColoring extends React.Component {
             const id = ((this.state.firstSector || 0) - i + 12) % 12;
             order.push(document.getElementById("sector-" + id.toString()).getAttribute("fill"));
         }
-        const result = btoa(order.join(","))
-        console.log(result);
-
+        const result = btoa(order.join(","));
         document.getElementById("result").innerHTML = result;
+    }
 
-        // const transform = circle.getAttribute("transform").split(" ")[0];
-        // const deg = ((this.state.firstSector || 0) - 5) * 30;
-        // circle.setAttribute("transform", transform + ` rotate(${deg},0,0)`);
+    copy() {
+        var result = document.getElementById("result");
+        result.select();
+        result.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("Result copied to clipboard");
     }
 
     render() {
@@ -192,11 +194,14 @@ class CircleColoring extends React.Component {
                     <Circle centerX={size / 2} centerY={size / 2.5} diameter={size * 2 / 3} apply={(i) => this.getSelectedColor(i)} />
                     <ColorPicker width={size} y={size - 100} select={(color) => this.selectColor(color)} />
                 </svg>
-                <div>
+                <div className="row">
                     <button onClick={() => this.export()}>Submit</button>
                 </div>
-                <div>
-                    <p id="result"></p>
+                <div className="row">
+                    <textarea id="result" rows="3" cols="50" readOnly />
+                </div>
+                <div className="row">
+                    <button onClick={() => this.copy()}>Copy</button>
                 </div>
             </div>
         );

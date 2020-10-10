@@ -1,3 +1,13 @@
 .App {
   text-align: center;
 }
+
+.row {
+  margin: 0.5em;
+}
+
+#result {
+  color: #cd0000;
+  background-color: #cdcdcd;
+  font-style: italic;
+}
