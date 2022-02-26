@@ -77,13 +77,13 @@ class ColorPicker extends React.Component {
         "#ff0000", // red
         "#ff7f50", // coral
         "#ffa500", // orange
-        "#daa520", // gold
+        "#fdd017", // gold
         "#ffff00", // yellow
-        "#808000", // olive
-        "#006400", // green
+        "#98bf64", // olive
+        "#028a0f", // green
         "#00ced1", // turquise
-        "#4169e1", // blue
-        "#000080", // indigo blue
+        "#1f45fc", // blue
+        "#0a1172", // indigo blue
         "#9400d3", // purple
         "#ff00ff", // magenta
     ];
@@ -189,7 +189,7 @@ class CircleColoring extends React.Component {
         return (
             <div>
                 <h1>Chroma Therapy</h1>
-                <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                <svg width="100%" height={size} viewBox={`0 0 ${size} ${size}`}>
                     <rect width={size} height={size} fill="none" stroke="#000" strokeWidth="1" />
                     <Circle centerX={size / 2} centerY={size / 2.5} diameter={size * 2 / 3} apply={(i) => this.getSelectedColor(i)} />
                     <ColorPicker width={size} y={size - 100} select={(color) => this.selectColor(color)} />
